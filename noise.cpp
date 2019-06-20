@@ -1,4 +1,3 @@
-#include <vector>
 #include <cmath>
 
 const int sec_width = 5;
