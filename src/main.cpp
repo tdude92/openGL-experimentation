@@ -44,7 +44,7 @@ int main() {
 
     settings.attributeFlags = sf::ContextSettings::Core;
 
-    sf::Window window(sf::VideoMode(600, 600), "OpenGL", sf::Style::Close, settings); // Create window
+    sf::Window window(sf::VideoMode(800, 600), "i am a reeeeeeeeetard", sf::Style::Close, settings); // Create window
 
     // Get OpenGL functionality.
     glewExperimental = GL_TRUE;
@@ -67,21 +67,32 @@ int main() {
     glLinkProgram(shaderProgram);
     glUseProgram(shaderProgram);
 
+    // Create a vertex array.
+    GLuint vertexArray;
+    glGenVertexArrays(1, &vertexArray);
+    glBindVertexArray(vertexArray);
 
     ///* Code: *///
     float vertices[] = {
         0.0, 0.5,
         0.5, -0.5,
-        -0.5, 0.5
-    };
+        -0.5, -0.5
+    }; // Vertex list.
 
+    // Create vertex buffer object.
     GLuint vbo; 
     glGenBuffers(1, &vbo);
-
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
+    // Declare vertex data formatting.
+    GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
+    glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(posAttrib);
 
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    window.display()
+;
     // Event loop.
     bool running = true;
     while (running) {
