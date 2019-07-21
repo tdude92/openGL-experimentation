@@ -1,8 +1,10 @@
 #define GLEW_STATIC
-#include <GL/glew.h>
 
-#include <iostream>
+#include <GL/glew.h>
 #include <SFML/Window.hpp>
+#include <iostream>
+#include <cmath>
+#include <chrono>
 
 // Shader source code in GLSL.
 // Stored in a const char array to be compiled later.
@@ -12,8 +14,11 @@ const char *vertexSource = R"glsl(
     #version 150 core
 
     in vec2 position;
+    in vec3 color;
+    out vec3 vertexColorOut;
 
     void main() {
+        vertexColorOut = color;
         gl_Position = vec4(position, 0.0, 1.0);
     }
 )glsl";
@@ -23,10 +28,11 @@ const char *vertexSource = R"glsl(
 const char *fragmentSource = R"glsl(
     #version 150 core
 
-    out vec4 outColour;
+    in vec3 vertexColorOut;
+    out vec4 colorOut;
 
     void main() {
-        outColour = vec4(1.0, 1.0, 1.0, 1.0);
+        colorOut = vec4(vertexColorOut, 1.0);
     }
 )glsl";
 
@@ -44,7 +50,7 @@ int main() {
 
     settings.attributeFlags = sf::ContextSettings::Core;
 
-    sf::Window window(sf::VideoMode(800, 600), "i am a reeeeeeeeetard", sf::Style::Close, settings); // Create window
+    sf::Window root(sf::VideoMode(800, 600), "OpenGL", sf::Style::Close, settings); // Create window
 
     // Get OpenGL functionality.
     glewExperimental = GL_TRUE;
@@ -74,9 +80,9 @@ int main() {
 
     ///* Code: *///
     float vertices[] = {
-        0.0, 0.5,
-        0.5, -0.5,
-        -0.5, -0.5
+        0.0f, 0.5f, 1.0f, 0.0f, 0.0f,
+        0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+        -0.5f, -0.5f, 0.0f, 0.0f, 1.0f
     }; // Vertex list.
 
     // Create vertex buffer object.
@@ -87,23 +93,28 @@ int main() {
 
     // Declare vertex data formatting.
     GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
-    glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(posAttrib);
+    glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), 0);
 
-    glDrawArrays(GL_TRIANGLES, 0, 3);
-    window.display()
-;
-    // Event loop.
-    bool running = true;
-    while (running) {
-        sf::Event windowEvent;
-        while (window.pollEvent(windowEvent)) {
-            switch (windowEvent.type) {
-                case sf::Event::Closed:
-                    running = false;
-                    break;
+    GLint colAttrib = glGetAttribLocation(shaderProgram, "color");
+    glEnableVertexAttribArray(colAttrib);
+    glVertexAttribPointer(colAttrib, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(2 * sizeof(float)));
+
+    // Main loop.
+    sf::Event event;
+    bool isRunning = true;
+    while (isRunning) {
+        while (root.pollEvent(event)) {
+            if (event.type == sf::Event::Closed) {
+                isRunning = false;
             }
         }
+        
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+        root.display();
     }
 
     return 0;
