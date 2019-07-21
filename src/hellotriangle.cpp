@@ -3,8 +3,6 @@
 #include <GL/glew.h>
 #include <SFML/Window.hpp>
 #include <iostream>
-#include <cmath>
-#include <chrono>
 
 // Shader source code in GLSL.
 // Stored in a const char array to be compiled later.
