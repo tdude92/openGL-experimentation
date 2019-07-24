@@ -1,4 +1,4 @@
-FILE = EBO
+FILE = hellotriangle-problems
 VPATH = ../include/SFML ../include/GL ../include
 
 main: $(FILE).o
