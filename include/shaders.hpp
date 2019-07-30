@@ -50,7 +50,7 @@ class Shader {
                 vertexSource = vShaderStream.str();
                 fragmentSource = fShaderStream.str();
             } catch (std::ifstream::failure error) {
-                std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
+                std::cout << "ERROR::SHADER::FILE_NOT_SUCCESSFULLY_READ" << std::endl;
             }
             const char* vShaderSource = vertexSource.c_str();
             const char* fShaderSource = fragmentSource.c_str();

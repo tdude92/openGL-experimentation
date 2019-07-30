@@ -1,0 +1,1 @@
+/usr/bin/c++  -g   CMakeFiles/main.dir/src/transformations.cpp.o CMakeFiles/main.dir/src/stb_image.cpp.o  -o main 

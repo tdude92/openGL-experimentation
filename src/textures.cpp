@@ -23,14 +23,14 @@ int main() {
     glewInit();
 
     ///* CREATE SHADER PROGRAMS *///
-    Shader shader("shaders/textures.vs", "shaders/textures.fs");
+    Shader shader("../src/shaders/textures.vs", "../src/shaders/textures.fs");
 
     float vertices[] = {
         // Positions            // Colors               // Texture coords
-        -0.5f, 0.5f, 0.0f,      1.0f, 0.0f, 0.0f,       0.0f, 1.0f, // Top left
-        0.5f, 0.5f, 0.0f,       0.0f, 1.0f, 0.0f,       1.0f, 1.0f, // Top right
-        0.5f, -0.5f, 0.0f,      1.0f, 0.0f, 0.0f,       1.0f, 0.0f, // Bottom right
-        -0.5f, -0.5f, 0.0f,     0.0f, 0.0f, 1.0f,       0.0f, 0.0f, // Bottom left
+        -0.5f, 0.5f, 0.0f,      1.0f, 1.0f, 0.0f,       0.0f, 0.0f, // Top left
+        0.5f, 0.5f, 0.0f,       0.0f, 1.0f, 0.0f,       1.0f, 0.0f, // Top right
+        0.5f, -0.5f, 0.0f,      1.0f, 0.0f, 0.0f,       1.0f, 1.0f, // Bottom right
+        -0.5f, -0.5f, 0.0f,     0.0f, 0.0f, 1.0f,       0.0f, 1.0f, // Bottom left
     };
 
     unsigned int indices[] = {
@@ -64,8 +64,11 @@ int main() {
     glBindVertexArray(0);
 
     ///* LOAD TEXTURES *///
-    GLuint crateTex;
+    GLuint crateTex, coolGuyTex;
     glGenTextures(1, &crateTex);
+    glGenTextures(1, &coolGuyTex);
+    
+    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, crateTex);
 
     // Set texture wrapping style.
@@ -73,11 +76,31 @@ int main() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
     // Set texture filtering method.
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
     int imgWidth, imgHeight, nrChannels;
-    unsigned char* imgData = stbi_load("assets/crate1_diffuse.png", &imgWidth, &imgHeight, &nrChannels, 0);
+    unsigned char* imgData = stbi_load("../src/assets/crate1_diffuse.png", &imgWidth, &imgHeight, &nrChannels, 0);
+
+    if (imgData) {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imgWidth, imgHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, imgData);
+        glGenerateMipmap(GL_TEXTURE_2D);
+    } else {
+        std::cout << "Failed to load texture" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    stbi_image_free(imgData);
+
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, coolGuyTex);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    imgData = stbi_load("../src/assets/coolguy.jpeg", &imgWidth, &imgHeight, &nrChannels, 0);
 
     if (imgData) {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imgWidth, imgHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, imgData);
@@ -86,7 +109,11 @@ int main() {
         std::cout << "Failed to load texture" << std::endl;
         exit(EXIT_FAILURE);
     }
-    stbi_image_free(imgData);
+
+    shader.use();
+    shader.setUniform_i("crateTex", 0);
+    shader.setUniform_i("coolGuyTex", 1);
+
 
     sf::Event event;
     bool running = true;
@@ -99,9 +126,14 @@ int main() {
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
+        shader.use();
+
+        glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, crateTex);
 
-        shader.use();
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, coolGuyTex);
+
         glBindVertexArray(vao);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);

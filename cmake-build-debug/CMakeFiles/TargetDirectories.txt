@@ -1,0 +1,8 @@
+/home/trevor/Documents/coding/github/openGL-experimentation/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/trevor/Documents/coding/github/openGL-experimentation/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/trevor/Documents/coding/github/openGL-experimentation/cmake-build-debug/CMakeFiles/hellotriangle-problems.dir
+/home/trevor/Documents/coding/github/openGL-experimentation/cmake-build-debug/CMakeFiles/shaders-problems.dir
+/home/trevor/Documents/coding/github/openGL-experimentation/cmake-build-debug/CMakeFiles/transformations.dir
+/home/trevor/Documents/coding/github/openGL-experimentation/cmake-build-debug/CMakeFiles/EBO.dir
+/home/trevor/Documents/coding/github/openGL-experimentation/cmake-build-debug/CMakeFiles/hellotriangle.dir
+/home/trevor/Documents/coding/github/openGL-experimentation/cmake-build-debug/CMakeFiles/textures.dir

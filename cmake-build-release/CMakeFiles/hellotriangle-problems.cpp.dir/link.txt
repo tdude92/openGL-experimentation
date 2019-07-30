@@ -1,0 +1,1 @@
+/usr/bin/c++  -O3 -DNDEBUG   CMakeFiles/hellotriangle-problems.cpp.dir/src/hellotriangle-problems.cpp.o  -o hellotriangle-problems.cpp 
