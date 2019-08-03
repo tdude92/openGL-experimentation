@@ -27,10 +27,10 @@ int main() {
 
     float vertices[] = {
         // Positions            // Colors               // Texture coords
-        -0.5f, 0.5f, 0.0f,      1.0f, 1.0f, 0.0f,       0.0f, 0.0f, // Top left
-        0.5f, 0.5f, 0.0f,       0.0f, 1.0f, 0.0f,       1.0f, 0.0f, // Top right
-        0.5f, -0.5f, 0.0f,      1.0f, 0.0f, 0.0f,       1.0f, 1.0f, // Bottom right
-        -0.5f, -0.5f, 0.0f,     0.0f, 0.0f, 1.0f,       0.0f, 1.0f, // Bottom left
+        -0.25f, 0.25f, 0.0f,      1.0f, 1.0f, 0.0f,       0.0f, 0.0f, // Top left
+        0.25f, 0.25f, 0.0f,       0.0f, 1.0f, 0.0f,       1.0f, 0.0f, // Top right
+        0.25f, -0.25f, 0.0f,      1.0f, 0.0f, 0.0f,       1.0f, 1.0f, // Bottom right
+        -0.25f, -0.25f, 0.0f,     0.0f, 0.0f, 1.0f,       0.0f, 1.0f, // Bottom left
     };
 
     unsigned int indices[] = {
@@ -39,6 +39,7 @@ int main() {
     };
 
     GLuint vao, vbo, ebo;
+    
     glGenVertexArrays(1, &vao);
     glGenBuffers(1, &vbo);
     glGenBuffers(1, &ebo);
@@ -143,4 +144,5 @@ int main() {
     glDeleteVertexArrays(1, &vao);
     glDeleteBuffers(1, &vbo);
     glDeleteBuffers(1, &ebo);
+    return 0;
 }
