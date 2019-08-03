@@ -1,1 +1,0 @@
-/usr/bin/c++  -O3 -DNDEBUG   CMakeFiles/transformations.dir/src/transformations.cpp.o CMakeFiles/transformations.dir/src/stb_image.cpp.o  -o transformations -lGL -lGLEW -lsfml-graphics -lsfml-window -lsfml-system 

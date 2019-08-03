@@ -1,1 +1,0 @@
-/usr/bin/c++  -g   CMakeFiles/textures.dir/src/textures.cpp.o CMakeFiles/textures.dir/src/stb_image.cpp.o  -o textures -lGL -lGLEW -lsfml-graphics -lsfml-window -lsfml-system 

@@ -1,1 +1,0 @@
-/usr/bin/c++  -g   CMakeFiles/hellotriangle.dir/src/hellotriangle.cpp.o  -o hellotriangle -lGL -lGLEW -lsfml-graphics -lsfml-window -lsfml-system 

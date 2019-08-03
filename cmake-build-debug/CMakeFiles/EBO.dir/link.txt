@@ -1,1 +1,0 @@
-/usr/bin/c++  -g   CMakeFiles/EBO.dir/src/EBO.cpp.o  -o EBO -lGL -lGLEW -lsfml-graphics -lsfml-window -lsfml-system 

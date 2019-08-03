@@ -1,1 +1,0 @@
-/usr/bin/c++  -g   CMakeFiles/hellotriangle-problems.cpp.dir/src/hellotriangle-problems.cpp.o  -o hellotriangle-problems.cpp 

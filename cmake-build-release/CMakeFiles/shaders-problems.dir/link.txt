@@ -1,1 +1,0 @@
-/usr/bin/c++  -O3 -DNDEBUG   CMakeFiles/shaders-problems.dir/src/shaders-problems.cpp.o  -o shaders-problems -lGL -lGLEW -lsfml-graphics -lsfml-window -lsfml-system 
