@@ -7,6 +7,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include <cstdlib>
+#include <cmath>
 #include <iostream>
 #include "stb_image.h"
 
@@ -16,6 +17,8 @@ int screenWidth = 720;
 int screenHeight = 720;
 
 int main() {
+    srand(time(NULL));
+
     sf::ContextSettings settings;
     settings.depthBits = 24;
     settings.stencilBits = 8;
@@ -40,47 +43,61 @@ int main() {
     // Define local space coordinates of an object.
     float vertices[] = {
         // Position             // Tex Coords
-        -0.5f, -0.5f, -0.5f,    0.0f, 0.0f,
-         0.5f, -0.5f, -0.5f,    1.0f, 0.0f,
-         0.5f,  0.5f, -0.5f,    1.0f, 1.0f,
-         0.5f,  0.5f, -0.5f,    1.0f, 1.0f,
-        -0.5f,  0.5f, -0.5f,    0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,    0.0f, 0.0f,
-
-        -0.5f, -0.5f,  0.5f,    0.0f, 0.0f,
-         0.5f, -0.5f,  0.5f,    1.0f, 0.0f,
-         0.5f,  0.5f,  0.5f,    1.0f, 1.0f,
-         0.5f,  0.5f,  0.5f,    1.0f, 1.0f,
-        -0.5f,  0.5f,  0.5f,    0.0f, 1.0f,
-        -0.5f, -0.5f,  0.5f,    0.0f, 0.0f,
-
-        -0.5f,  0.5f,  0.5f,    1.0f, 0.0f,
-        -0.5f,  0.5f, -0.5f,    1.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,    0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,    0.0f, 1.0f,
-        -0.5f, -0.5f,  0.5f,    0.0f, 0.0f,
-        -0.5f,  0.5f,  0.5f,    1.0f, 0.0f,
-
-         0.5f,  0.5f,  0.5f,    1.0f, 0.0f,
-         0.5f,  0.5f, -0.5f,    1.0f, 1.0f,
-         0.5f, -0.5f, -0.5f,    0.0f, 1.0f,
-         0.5f, -0.5f, -0.5f,    0.0f, 1.0f,
-         0.5f, -0.5f,  0.5f,    0.0f, 0.0f,
-         0.5f,  0.5f,  0.5f,    1.0f, 0.0f,
-
         -0.5f, -0.5f, -0.5f,    0.0f, 1.0f,
          0.5f, -0.5f, -0.5f,    1.0f, 1.0f,
-         0.5f, -0.5f,  0.5f,    1.0f, 0.0f,
-         0.5f, -0.5f,  0.5f,    1.0f, 0.0f,
-        -0.5f, -0.5f,  0.5f,    0.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,    1.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,    1.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,    0.0f, 0.0f,
         -0.5f, -0.5f, -0.5f,    0.0f, 1.0f,
 
-        -0.5f,  0.5f, -0.5f,    0.0f, 1.0f,
-         0.5f,  0.5f, -0.5f,    1.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,    0.0f, 1.0f,
+         0.5f, -0.5f,  0.5f,    1.0f, 1.0f,
          0.5f,  0.5f,  0.5f,    1.0f, 0.0f,
          0.5f,  0.5f,  0.5f,    1.0f, 0.0f,
         -0.5f,  0.5f,  0.5f,    0.0f, 0.0f,
-        -0.5f,  0.5f, -0.5f,    0.0f, 1.0f
+        -0.5f, -0.5f,  0.5f,    0.0f, 1.0f,
+
+        -0.5f,  0.5f,  0.5f,    1.0f, 1.0f,
+        -0.5f,  0.5f, -0.5f,    1.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f,    0.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f,    0.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f,    0.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f,    1.0f, 1.0f,
+
+         0.5f,  0.5f,  0.5f,    1.0f, 1.0f,
+         0.5f,  0.5f, -0.5f,    1.0f, 0.0f,
+         0.5f, -0.5f, -0.5f,    0.0f, 0.0f,
+         0.5f, -0.5f, -0.5f,    0.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,    0.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,    1.0f, 1.0f,
+
+        -0.5f, -0.5f, -0.5f,    0.0f, 0.0f,
+         0.5f, -0.5f, -0.5f,    1.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,    1.0f, 1.0f,
+         0.5f, -0.5f,  0.5f,    1.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,    0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,    0.0f, 0.0f,
+
+        -0.5f,  0.5f, -0.5f,    0.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,    1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,    1.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,    1.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f,    0.0f, 1.0f,
+        -0.5f,  0.5f, -0.5f,    0.0f, 0.0f
+    };
+
+    // Define world positions of each cube.
+    glm::vec3 cubePosition[] {
+        glm::vec3( 0.0f,  0.0f,  0.0f), 
+        glm::vec3( 2.0f,  5.0f, -15.0f), 
+        glm::vec3(-1.5f, -2.2f, -2.5f),  
+        glm::vec3(-3.8f, -2.0f, -12.3f),  
+        glm::vec3( 2.4f, -0.4f, -3.5f),  
+        glm::vec3(-1.7f,  3.0f, -7.5f),  
+        glm::vec3( 1.3f, -2.0f, -2.5f),  
+        glm::vec3( 1.5f,  2.0f, -2.5f), 
+        glm::vec3( 1.5f,  0.2f, -1.5f), 
+        glm::vec3(-1.3f,  1.0f, -1.5f)
     };
 
     // Create objects.
@@ -165,6 +182,8 @@ int main() {
                 glViewport(0, 0, screenWidth, screenHeight);
             }
         }
+        sf::Time elapsed = clock.getElapsedTime();
+
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -177,19 +196,23 @@ int main() {
         glBindVertexArray(vao);
 
         // Transformations.
-        sf::Time elapsed = clock.getElapsedTime();
         glm::mat4 model(1.0f), view(1.0f), projection;
-
-        model = glm::rotate(model, elapsed.asSeconds() * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
         view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
         projection = glm::perspective(glm::radians(45.0f), (float)screenWidth / (float)screenHeight, 0.1f, 100.0f);
 
-        glUniformMatrix4fv(glGetUniformLocation(shader.id(), "model"), 1, GL_FALSE, glm::value_ptr(model));
         glUniformMatrix4fv(glGetUniformLocation(shader.id(), "view"), 1, GL_FALSE, glm::value_ptr(view));
         glUniformMatrix4fv(glGetUniformLocation(shader.id(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 
-        // Drawing vertices.
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+        for (int i = 0; i < 10; ++i) {
+            model = glm::mat4(1.0f);
+            model = glm::translate(model, cubePosition[i]);
+            model = glm::rotate(model, elapsed.asSeconds() * glm::radians((i + 1) * 20.0f), glm::vec3(1.0f, 0.3f, 0.5f));
+
+            glUniformMatrix4fv(glGetUniformLocation(shader.id(), "model"), 1, GL_FALSE, glm::value_ptr(model));
+
+            // Drawing vertices.
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+        }
         glBindVertexArray(0);
 
         root.display();
