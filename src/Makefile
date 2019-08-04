@@ -1,4 +1,4 @@
-FILE = transformations
+FILE = 3d
 VPATH = ../include/SFML ../include/GL ../include/glm ../include/glm/gtc ../include
 
 main: $(FILE).o stb_image.o
