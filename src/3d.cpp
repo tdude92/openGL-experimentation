@@ -10,11 +10,12 @@
 #include <cmath>
 #include <iostream>
 #include "stb_image.h"
+#include "camera.hpp"
 
 #include "shaders.hpp"
 
-int screenWidth = 720;
-int screenHeight = 720;
+unsigned int screenWidth = sf::VideoMode::getDesktopMode().width;
+unsigned int screenHeight = sf::VideoMode::getDesktopMode().height;
 
 int main() {
     srand(time(NULL));
@@ -27,7 +28,8 @@ int main() {
     settings.minorVersion = 3;
     settings.attributeFlags = sf::ContextSettings::Core;
 
-    sf::Window root(sf::VideoMode(screenWidth, screenHeight), "3D!", sf::Style::Default, settings);
+    sf::Window root(sf::VideoMode(screenWidth, screenHeight), "3D!", sf::Style::Fullscreen, settings);
+    root.setMouseCursorVisible(false);
 
     glewExperimental = GL_TRUE;
     glewInit();
@@ -86,8 +88,7 @@ int main() {
         -0.5f,  0.5f, -0.5f,    0.0f, 0.0f
     };
 
-    // Define world positions of each cube.
-    glm::vec3 cubePosition[] {
+    glm::vec3 cubePositions[] = {
         glm::vec3( 0.0f,  0.0f,  0.0f), 
         glm::vec3( 2.0f,  5.0f, -15.0f), 
         glm::vec3(-1.5f, -2.2f, -2.5f),  
@@ -97,7 +98,7 @@ int main() {
         glm::vec3( 1.3f, -2.0f, -2.5f),  
         glm::vec3( 1.5f,  2.0f, -2.5f), 
         glm::vec3( 1.5f,  0.2f, -1.5f), 
-        glm::vec3(-1.3f,  1.0f, -1.5f)
+        glm::vec3(-1.3f,  1.0f, -1.5f)  
     };
 
     // Create objects.
@@ -169,7 +170,19 @@ int main() {
     shader.setUniform_i("crateTex", 0);
     shader.setUniform_i("coolGuyTex", 1);
 
+    // Camera variables.
+    glm::vec3 camTarget(0.0f, 0.0f, 0.0f);
+    glm::vec3 camPos(0.0f, 0.0f, 3.0f);
+    glm::vec3 camFront(0.0f, 0.0f, -1.0f);
+    glm::vec3 camUp(0.0f, 1.0f, 0.0f);
+    double yaw = -90.0f, pitch = 0.0f;
+
+    sf::Mouse::setPosition(sf::Vector2i(sf::VideoMode::getDesktopMode().width / 2, sf::VideoMode::getDesktopMode().height / 2));
+    sf::Vector2i mousePrevPos = sf::Mouse::getPosition();
+
     sf::Clock clock;
+    sf::Time prevFrame = clock.getElapsedTime();
+    sf::Time currFrame = clock.getElapsedTime();
     sf::Event event;
     bool running = true;
     while (running) {
@@ -180,10 +193,44 @@ int main() {
                 screenWidth = event.size.width;
                 screenHeight = event.size.height;
                 glViewport(0, 0, screenWidth, screenHeight);
+            } else if (event.type == sf::Event::MouseMoved) {
+                float sensitivity = 0.25f;
+                float offsetX = (event.mouseMove.x - mousePrevPos.x) * sensitivity;
+                float offsetY = (mousePrevPos.y - event.mouseMove.y) * sensitivity;
+
+                yaw += offsetX;
+                pitch += offsetY;
+
+                if(pitch > 89.0f)
+                    pitch =  89.0f;
+                if(pitch < -89.0f)
+                    pitch = -89.0f;
+
+                camFront.x = glm::cos(glm::radians(pitch)) * glm::cos(glm::radians(yaw));
+                camFront.y = glm::sin(glm::radians(pitch));
+                camFront.z = glm::cos(glm::radians(pitch)) * glm::sin(glm::radians(yaw));
+                camFront = glm::normalize(camFront);
+
+                mousePrevPos = sf::Vector2i(event.mouseMove.x, event.mouseMove.y);
             }
         }
-        sf::Time elapsed = clock.getElapsedTime();
-
+        prevFrame = currFrame;
+        currFrame = clock.getElapsedTime();
+        double dT = currFrame.asSeconds() - prevFrame.asSeconds();
+        float cameraSpeed = 2.5f * dT;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+            camPos += cameraSpeed * camFront;
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+            camPos -= glm::normalize(glm::cross(camFront, camUp)) * cameraSpeed;
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+            camPos -= cameraSpeed * camFront;
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+            camPos += glm::normalize(glm::cross(camFront, camUp)) * cameraSpeed;
+        }
+        
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -197,7 +244,8 @@ int main() {
 
         // Transformations.
         glm::mat4 model(1.0f), view(1.0f), projection;
-        view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+
+        view = glm::lookAt(camPos, camPos + camFront, camUp);
         projection = glm::perspective(glm::radians(45.0f), (float)screenWidth / (float)screenHeight, 0.1f, 100.0f);
 
         glUniformMatrix4fv(glGetUniformLocation(shader.id(), "view"), 1, GL_FALSE, glm::value_ptr(view));
@@ -205,14 +253,14 @@ int main() {
 
         for (int i = 0; i < 10; ++i) {
             model = glm::mat4(1.0f);
-            model = glm::translate(model, cubePosition[i]);
-            model = glm::rotate(model, elapsed.asSeconds() * glm::radians((i + 1) * 20.0f), glm::vec3(1.0f, 0.3f, 0.5f));
-
+            model = glm::translate(model, cubePositions[i]);
+            model = glm::rotate(model, glm::radians(i * 20.0f), glm::vec3(0.5f, 1.0f, 0.0f));
             glUniformMatrix4fv(glGetUniformLocation(shader.id(), "model"), 1, GL_FALSE, glm::value_ptr(model));
 
             // Drawing vertices.
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
+
         glBindVertexArray(0);
 
         root.display();
